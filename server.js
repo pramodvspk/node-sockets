@@ -10,20 +10,30 @@ var io = require('socket.io')(http);
 app.use(express.static(__dirname + '/public'));
 
 var clientInfo = {};
+var systemMessage = {
+	name: 'System',
+	timestamp: moment().valueOf
+};
 
 // Initializing moment
 io.on('connection', function (socket) {
 	console.log("The user has been connected");
 	
+	socket.on('disconnect', function () {
+		var userData = clientInfo[socket.id]
+		if (typeof userData !== 'undefined') {
+			socket.leave(userData.room);
+			systemMessage.text = userData.name + ' has left the room';
+			io.to(userData.room).emit('message', systemMessage);
+			delete clientInfo[socket.id];
+		}
+	});
+
 	socket.on('joinRoom', function (req) {
 		clientInfo[socket.id] = req;
 		socket.join(req.room);
-		socket.broadcast.to(req.room).emit('message', {
-			name: 'System',
-			text: req.name+ ' has joined!!',
-			timestamp: moment().valueOf()
-		});
-
+		systemMessage.text = req.name+ ' has joined!!';
+		socket.broadcast.to(req.room).emit('message', systemMessage);
 	});
 
 // Allowing 2 browsers to communicate
@@ -36,16 +46,9 @@ io.on('connection', function (socket) {
 		io.to(clientInfo[socket.id].room).emit('message', message);
 	});
 
-
-
-	socket.emit('message', {
-		text: "Welcome to the chat application",
-		timestamp: moment().valueOf(),
-		name: "System"
-	});
+	systemMessage.text = "Welcome to the chat application";
+	socket.emit('message', systemMessage);
 });
-
-
 
 http.listen(PORT, function () {
 	console.log('Server started on port '+ PORT);
