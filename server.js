@@ -5,6 +5,11 @@ var app = express();
 // Creating a server using a built in node module instead of express
 // Start a new server and use the express app as boiler plate
 var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+io.on('connection', function () {
+	console.log("The user has been connected");
+});
 
 app.use(express.static(__dirname + '/public'));
 
