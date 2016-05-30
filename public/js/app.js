@@ -7,12 +7,16 @@ socket.on('connect', function () {
 socket.on('message', function (message) {
 	console.log('New message: ');
 	console.log(message.text);
+
+	// Adding the message to the div - messages
+	jQuery(".messages").append("<p>"+message.text+"</p>");
 });
 
 // Handles submitting of new message
 var $form = jQuery("#message-form");
 
 $form.on("submit", function (event) {
+	// Doesnt let the page to refresh
 	event.preventDefault();
 
 	var $message = $form.find('input[name=message]');
