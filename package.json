@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/pramodvspk/node-sockets/issues"
   },
-  "homepage": "https://github.com/pramodvspk/node-sockets#readme"
+  "homepage": "https://github.com/pramodvspk/node-sockets#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
 }
