@@ -1,4 +1,5 @@
 var socket = io();
+
 socket.on('connect', function () {
 	console.log("Connected to the socket.io server");
 });
@@ -7,9 +8,12 @@ socket.on('connect', function () {
 socket.on('message', function (message) {
 	console.log('New message: ');
 	console.log(message.text);
+	// Formatting the time
+	var timestampMoment = moment.utc(message.timestamp);
+	var localTimestamp = timestampMoment.local().format('h:mm a');
 
 	// Adding the message to the div - messages
-	jQuery(".messages").append("<p>"+message.text+"</p>");
+	jQuery(".messages").append("<p><strong>"+localTimestamp + ':</strong>' +message.text+"</p>");
 });
 
 // Handles submitting of new message
@@ -21,7 +25,8 @@ $form.on("submit", function (event) {
 
 	var $message = $form.find('input[name=message]');
 	socket.emit('message', {
-		text: $message.val()
+		text: $message.val(),
+		timestamp: moment().valueOf()
 	});
 	$message.val('');
 });
