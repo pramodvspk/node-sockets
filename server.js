@@ -7,8 +7,19 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-io.on('connection', function () {
+io.on('connection', function (socket) {
 	console.log("The user has been connected");
+
+// Allowing 2 browsers to communicate
+	socket.on('message', function (message) {
+		console.log("Message received: " + message.text);
+		// Emitting the message out to everybody except who sent the message
+		socket.broadcast.emit('message', message);
+	});
+
+	socket.emit('message', {
+		text: "Welcome to the chat application"
+	});
 });
 
 app.use(express.static(__dirname + '/public'));
