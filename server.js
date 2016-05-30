@@ -15,6 +15,23 @@ var systemMessage = {
 	timestamp: moment().valueOf
 };
 
+function sendCurrentUsers(socket) {
+	var info = clientInfo[socket.id];
+	var users = [];
+	if (typeof info === 'undefined') {
+		return; 
+	} else {
+		Object.keys(clientInfo).forEach(function (socketId) {
+			var userInfo = clientInfo[socketId];
+			if(userInfo.room == info.room) {
+				users.push(userInfo.name);
+			}
+		});
+	}
+	systemMessage.text = 'Current users: ' + users.join(',');
+	socket.emit('message', systemMessage);
+}
+
 // Initializing moment
 io.on('connection', function (socket) {
 	console.log("The user has been connected");
@@ -38,12 +55,17 @@ io.on('connection', function (socket) {
 
 // Allowing 2 browsers to communicate
 	socket.on('message', function (message) {
-		console.log("Message received: " + message.text);
-		// Emitting the message out to everybody except who sent the message
-		//socket.broadcast.emit('message', message);
-		message.timestamp = moment().valueOf();
-		// Emits the message only to the users who are in the same room
-		io.to(clientInfo[socket.id].room).emit('message', message);
+
+		if(message.text == '@currentUsers') {
+			sendCurrentUsers(socket);
+		} else {
+			console.log("Message received: " + message.text);
+			// Emitting the message out to everybody except who sent the message
+			//socket.broadcast.emit('message', message);
+			message.timestamp = moment().valueOf();
+			// Emits the message only to the users who are in the same room
+			io.to(clientInfo[socket.id].room).emit('message', message);			
+		}
 	});
 
 	systemMessage.text = "Welcome to the chat application";
