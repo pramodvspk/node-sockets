@@ -2,18 +2,39 @@
 <html>
 <head>
 	<title>Chat</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 </head>
 <body>
-	<a href="/index.html">Change Details</a>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3 well">
+				<a href="/index.html">Change Details</a>
 
-	<h1 class="room"></h1>
-	<div class="messages">
-			<!--Messages will be shown here-->
+				<h1 class="room"></h1>
+
+				<ul class="messages list-group">
+						<!--Messages will be shown here-->
+				</ul>
+
+				<form id="message-form">
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="glyphicon glyphicon-comment"></i>
+							</span>
+							<input type="text" name="message" class="form-control" required />
+						</div>
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-default btn-block" />
+					</div>
+					
+				</form>
+			</div>
+		</div>
 	</div>
-	<form id="message-form">
-		<input type="text" name="message"/>
-		<input type="submit"/>
-	</form>
+	
 
 	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.6/socket.io.js"></script>
