@@ -4,6 +4,10 @@ var socket = io();
 
 socket.on('connect', function () {
 	console.log("Connected to the socket.io server");
+	socket.emit('joinRoom', {	
+		name: name,
+		room: room
+	});
 });
 
 // Custom event name, callback function data gets passed
@@ -35,3 +39,8 @@ $form.on("submit", function (event) {
 	});
 	$message.val('');
 });
+
+$(document).ready(function() {
+	console.log("In ready func");
+	$(".room").text(room);
+})

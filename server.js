@@ -7,10 +7,24 @@ var moment = require('moment');
 // Start a new server and use the express app as boiler plate
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+app.use(express.static(__dirname + '/public'));
+
+var clientInfo = {};
 
 // Initializing moment
 io.on('connection', function (socket) {
 	console.log("The user has been connected");
+	
+	socket.on('joinRoom', function (req) {
+		clientInfo[socket.id] = req;
+		socket.join(req.room);
+		socket.broadcast.to(req.room).emit('message', {
+			name: 'System',
+			text: req.name+ ' has joined!!',
+			timestamp: moment().valueOf()
+		});
+
+	});
 
 // Allowing 2 browsers to communicate
 	socket.on('message', function (message) {
@@ -18,8 +32,11 @@ io.on('connection', function (socket) {
 		// Emitting the message out to everybody except who sent the message
 		//socket.broadcast.emit('message', message);
 		message.timestamp = moment().valueOf();
-		io.emit('message', message);
+		// Emits the message only to the users who are in the same room
+		io.to(clientInfo[socket.id].room).emit('message', message);
 	});
+
+
 
 	socket.emit('message', {
 		text: "Welcome to the chat application",
@@ -28,7 +45,7 @@ io.on('connection', function (socket) {
 	});
 });
 
-app.use(express.static(__dirname + '/public'));
+
 
 http.listen(PORT, function () {
 	console.log('Server started on port '+ PORT);
